@@ -70,7 +70,19 @@ type Shipment struct{
 	Quantity string `json:"quantity"`
 	ShipmentDate string `json:"shipmentDate"`	
 	ReceivedDate string `json:"receivedDate"`
-	Status string `json:"status"`	
+	Status string `json:"status"`
+	ShipFromCity string `json:"shipFromCity"`
+	ShipFromCountry string `json:"shipFromCountry"`
+	ShipToCity string `json:"shipToCity"`
+	ShipToCountry string `json:"shipToCountry"`
+	TruckNum string `json:"truckNum"`
+	LogisticAgencyID string `json:"logisticAgencyID"`
+	AirShipWayBillNum string `json:"airShipWayBillNum"`
+	FlightVesselID string `json:"flightVesselID"`
+	DepartingPort string `json:"departingPort"`
+	ArrivingPort string `json:"arrivingPort"`
+	DepartureTime string `json:"departureTime"`
+	ArrivalTime string `json:"arrivalTime"`
 }
 // ============================================================================================================================
 // Main - start the chaincode for Form management
