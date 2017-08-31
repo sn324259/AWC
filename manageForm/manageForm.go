@@ -53,6 +53,8 @@ type Form struct{
 	Tier2_Form_number string `json:"tier2_Form_number"`
 	Tier1_Form_number string `json:"tier1_Form_number"`
 	UserType string `json:"userType"`
+	VendorName string `json:"vendorName"`
+	IPFS_hash string `json:"ipfsHash"`
 
 }
 type Shipment struct{
@@ -68,7 +70,7 @@ type Shipment struct{
 	Quantity string `json:"quantity"`
 	ShipmentDate string `json:"shipmentDate"`	
 	ReceivedDate string `json:"receivedDate"`
-	Status string `json:"status"`
+	Status string `json:"status"`	
 }
 // ============================================================================================================================
 // Main - start the chaincode for Form management
@@ -169,6 +171,8 @@ func (t *ManageForm) Query(stub shim.ChaincodeStubInterface, function string, ar
 		return t.getForm_byID(stub, args[0])
 	} else if function == "getForm_byUser" {													//Read a Form by Buyer
 		return t.getForm_byUser(stub, args)
+	} else if function == "getForms_byTier" {													//Get Tier - to - Buyer
+		return t.getForms_byTier(stub, args)
 	} else if function == "get_AllForm" {													//Read all Forms
 		return t.get_AllForm(stub, args)
 	} 
@@ -571,7 +575,9 @@ func (t *ManageForm) update_Form(stub shim.ChaincodeStubInterface, args []string
 		`"approvalDate": "` + res.ApprovalDate + `" , `+ 	
 		`"authorization_number": "` + res.Authorization_number + `" , `+ 
 		forms +
-		`"userType": "` + res.UserType + `"`+
+		`"userType": "` + res.UserType + `" , ` +
+		`"vendorName": "` + res.VendorName + `" , ` +
+		`"ipfsHash": "` + res.IPFS_hash + `"` +
 		`}`
 	
 	err = stub.PutState(FAA_formNumber, []byte(input))									//store Form with id as key
@@ -586,7 +592,7 @@ func (t *ManageForm) update_Form(stub shim.ChaincodeStubInterface, args []string
 // ============================================================================================================================
 func (t *ManageForm) createForm_Tier3(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var err error
-	if len(args) != 9 {
+	if len(args) != 11 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 9")
 	}
 	fmt.Println("Creating a new Form for Tier-3")
@@ -617,7 +623,12 @@ func (t *ManageForm) createForm_Tier3(stub shim.ChaincodeStubInterface, args []s
 	if len(args[8]) <= 0 {
 		return nil, errors.New("9th argument must be a non-empty string")
 	}
-	
+	if len(args[9]) <= 0 {
+		return nil, errors.New("10th argument must be a non-empty string")
+	}
+	if len(args[10]) <= 0 {
+		return nil, errors.New("11th argument must be a non-empty string")
+	}
 	FAA_formNumber := args[0] // FAA_formNumber or FAA_formNumberber
 	quantity := args[1]
 	FAA_formUrl := args[2]
@@ -628,6 +639,8 @@ func (t *ManageForm) createForm_Tier3(stub shim.ChaincodeStubInterface, args []s
 	approvalDate	:= args[7]
 	authorization_number := args[8]
 	userType := "Tier-3"	
+	vendorName := args[9]
+	ipfsHash := args[10]
 	qty,err := strconv.Atoi(quantity)
 	if err != nil {
 		return nil, errors.New("Error while converting string 'quantity' to int ")
@@ -652,7 +665,9 @@ func (t *ManageForm) createForm_Tier3(stub shim.ChaincodeStubInterface, args []s
 		`"total_approvedQty": "` + total_approvedQty + `" , `+ 
 		`"approvalDate": "` + approvalDate + `" , `+ 	
 		`"authorization_number": "` + authorization_number + `" , `+ 
-		`"userType": "` + userType + `"`+
+		`"userType": "` + userType + `" , `+
+		`"vendorName": "` + vendorName + `" , `+
+		`"ipfsHash": "` + ipfsHash + `"`+
 		`}`
 		fmt.Println("input: " + input)
 		fmt.Print("input in bytes array: ")
@@ -693,7 +708,7 @@ func (t *ManageForm) createForm_Tier3(stub shim.ChaincodeStubInterface, args []s
 func (t *ManageForm) createForm_Tier2(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var err error
 	var valIndex Shipment
-	if len(args) != 12 {
+	if len(args) != 14 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 12")
 	}
 	fmt.Println("Creating a new Form for Tier-2")
@@ -733,7 +748,12 @@ func (t *ManageForm) createForm_Tier2(stub shim.ChaincodeStubInterface, args []s
 	if len(args[11]) <= 0 {
 		return nil, errors.New("12th argument must be a non-empty string")
 	}
-	
+	if len(args[12]) <= 0 {
+		return nil, errors.New("13th argument must be a non-empty string")
+	}
+	if len(args[13]) <= 0 {
+		return nil, errors.New("14th argument must be a non-empty string")
+	}
 	
 	FAA_formNumber := args[0]
 	quantity := args[1]
@@ -748,6 +768,8 @@ func (t *ManageForm) createForm_Tier2(stub shim.ChaincodeStubInterface, args []s
 	shipmentId := args[10]
 	userType := "Tier-2"
 	chaincodeURL := args[11]
+	vendorName := args[12]
+	ipfsHash := args[13]
 	// Fetching shipment status from 'manageShipment' chaincode
 	f := "getShipment_byId"
 	queryArgs := util.ToChaincodeArgs(f, shipmentId)
@@ -806,7 +828,9 @@ func (t *ManageForm) createForm_Tier2(stub shim.ChaincodeStubInterface, args []s
 		`"approvalDate": "` + approvalDate + `" , `+ 	
 		`"authorization_number": "` + authorization_number + `" , `+ 
 		`"tier3_Form_number": "` + tier3_Form_number + `" , `+
-		`"userType": "` + userType + `"`+  
+		`"userType": "` + userType + `" , `+
+		`"vendorName": "` + vendorName + `" , `+
+		`"ipfsHash": "` + ipfsHash + `"`+  
 		`}`
 		fmt.Println("input: " + input)
 		fmt.Print("input in bytes array: ")
@@ -859,7 +883,7 @@ func (t *ManageForm) createForm_Tier1(stub shim.ChaincodeStubInterface, args []s
 	var err error
 	var valIndex Shipment
 	var formIndex Form
-	if len(args) != 12 {
+	if len(args) != 14 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 12")
 	}
 	fmt.Println("Creating a new Form for Tier-1")
@@ -899,7 +923,12 @@ func (t *ManageForm) createForm_Tier1(stub shim.ChaincodeStubInterface, args []s
 	if len(args[11]) <= 0 {
 		return nil, errors.New("12th argument must be a non-empty string")
 	}
-	
+	if len(args[12]) <= 0 {
+		return nil, errors.New("13th argument must be a non-empty string")
+	}
+	if len(args[13]) <= 0 {
+		return nil, errors.New("14th argument must be a non-empty string")
+	}	
 	
 	FAA_formNumber := args[0] // FAA_formNumber or FAA_formNumberber
 	quantity := args[1]
@@ -914,6 +943,8 @@ func (t *ManageForm) createForm_Tier1(stub shim.ChaincodeStubInterface, args []s
 	shipmentId := args[10]
 	userType := "Tier-1"
 	chaincodeURL := args[11]
+	vendorName := args[12]
+	ipfsHash := args[13]
 	// Fetching shipment status from 'manageShipment' chaincode
 	f := "getShipment_byId"
 	queryArgs := util.ToChaincodeArgs(f, shipmentId)
@@ -985,7 +1016,9 @@ func (t *ManageForm) createForm_Tier1(stub shim.ChaincodeStubInterface, args []s
 		`"authorization_number": "` + authorization_number + `" , `+ 
 		`"tier2_Form_number": "` + tier2_Form_number + `" , `+
 		`"tier3_Form_number": "` + tier3_Form_number + `" , `+
-		`"userType": "` + userType + `"`+    
+		`"userType": "` + userType + `" , `+
+		`"vendorName": "` + vendorName + `" , `+
+		`"ipfsHash": "` + ipfsHash + `"`+    
 		`}`
 		fmt.Println("input: " + input)
 		fmt.Print("input in bytes array: ")
@@ -1038,7 +1071,7 @@ func (t *ManageForm) createForm_OEM(stub shim.ChaincodeStubInterface, args []str
 	var err error
 	var valIndex Shipment
 	var	formIndex Form
-	if len(args) != 12 {
+	if len(args) != 14 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 12")
 	}
 	fmt.Println("Creating a new Form for OEM")
@@ -1078,7 +1111,13 @@ func (t *ManageForm) createForm_OEM(stub shim.ChaincodeStubInterface, args []str
 	if len(args[11]) <= 0 {
 		return nil, errors.New("12th argument must be a non-empty string")
 	}
-	
+	if len(args[12]) <= 0 {
+		return nil, errors.New("13th argument must be a non-empty string")
+	}
+	if len(args[13]) <= 0 {
+		return nil, errors.New("14th argument must be a non-empty string")
+	}
+
 	FAA_formNumber := args[0]
 	quantity := args[1]
 	FAA_formUrl := args[2]
@@ -1092,6 +1131,8 @@ func (t *ManageForm) createForm_OEM(stub shim.ChaincodeStubInterface, args []str
 	shipmentId := args[10]
 	userType := "OEM"
 	chaincodeURL := args[11]
+	vendorName := args[12]
+	ipfsHash := args[13]
 	// Fetching shipment status from 'manageShipment' chaincode
 	f := "getShipment_byId"
 	queryArgs := util.ToChaincodeArgs(f, shipmentId)
@@ -1165,7 +1206,9 @@ func (t *ManageForm) createForm_OEM(stub shim.ChaincodeStubInterface, args []str
 		`"tier1_Form_number": "` + tier1_Form_number + `" , `+
 		`"tier2_Form_number": "` + tier2_Form_number + `" , `+
 		`"tier3_Form_number": "` + tier3_Form_number + `" , `+
-		`"userType": "` + userType + `"`+
+		`"userType": "` + userType + `" , `+
+		`"vendorName": "` + vendorName + `" , `+
+		`"ipfsHash": "` + ipfsHash + `"`+ 
 		`}`
 		fmt.Println("input: " + input)
 		fmt.Print("input in bytes array: ")
