@@ -68,6 +68,18 @@ type Shipment struct{
 	ShipmentDate string `json:"shipmentDate"`	
 	ReceivedDate string `json:"receivedDate"`
 	Status string `json:"status"`
+	ShipFromCity string `json:"shipFromCity"`
+	ShipFromCountry string `json:"shipFromCountry"`
+	ShipToCity string `json:"shipToCity"`
+	ShipToCountry string `json:"shipToCountry"`
+	TruckNum string `json:"truckNum"`
+	LogisticAgencyID string `json:"logisticAgencyID"`
+	AirShipWayBillNum string `json:"airShipWayBillNum"`
+	FlightVesselID string `json:"flightVesselID"`
+	DepartingPort string `json:"departingPort"`
+	ArrivingPort string `json:"arrivingPort"`
+	DepartureTime string `json:"departureTime"`
+	ArrivalTime string `json:"arrivalTime"`
 }
 // ============================================================================================================================
 // Main - start the chaincode for Shipment management
@@ -371,7 +383,19 @@ func (t *ManageShipment) updateShipment(stub shim.ChaincodeStubInterface, args [
 		`"FAA_formNumber": "` + res.FAA_FormNumber + `" , `+
 		`"quantity": "` + res.Quantity + `" , `+ 
 		`"shipmentDate": "` + res.ShipmentDate + `" , `+ 
-		`"status": "` + res.Status + `"`+ 
+		`"status": "` + res.Status + `" , `+
+		`"shipFromCity": "` + res.ShipFromCity + `" , `+
+		`"shipFromCountry": "` + res.ShipFromCountry + `" , `+
+		`"shipToCity": "` + res.ShipToCity + `" , `+
+		`"shipToCountry": "` + res.ShipToCountry + `" , `+
+		`"truckNum": "` + res.TruckNum + `" , `+
+		`"logisticAgencyID": "` + res.LogisticAgencyID + `" , `+
+		`"airShipWayBillNum": "` + res.AirShipWayBillNum + `" , `+
+		`"flightVesselID": "` + res.FlightVesselID + `" , `+
+		`"departingPort": "` + res.DepartingPort + `" , `+
+		`"arrivingPort": "` + res.ArrivingPort + `" , `+
+		`"departureTime": "` + res.DepartureTime + `" , `+
+		`"arrivalTime": "` + res.ArrivalTime + `"`+
 	    `}`
 		
 	err = stub.PutState(shipmentId, []byte(input))									//store Shipment with id as key
@@ -388,7 +412,7 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	//createShipment('shipmentId','description','sender','receiver','FAA_formNumber','quantity','shipmentDate')
 	var err error
 	var valIndex Form
-	if len(args) != 10 {
+	if len(args) != 22 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 10")
 	}
 	fmt.Println("Creating a new Shipment")
@@ -422,7 +446,43 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	if len(args[9]) <= 0 {
 		return nil, errors.New("10th argument must be a non-empty string")
 	}
-	
+	if len(args[10]) <= 0 {
+		return nil, errors.New("10th argument must be a non-empty string")
+	}
+	if len(args[11]) <= 0 {
+		return nil, errors.New("10th argument must be a non-empty string")
+	}
+	if len(args[12]) <= 0 {
+		return nil, errors.New("10th argument must be a non-empty string")
+	}
+	if len(args[13]) <= 0 {
+		return nil, errors.New("10th argument must be a non-empty string")
+	}
+	if len(args[14]) <= 0 {
+		return nil, errors.New("10th argument must be a non-empty string")
+	}
+	if len(args[15]) <= 0 {
+		return nil, errors.New("10th argument must be a non-empty string")
+	}
+	if len(args[16]) <= 0 {
+		return nil, errors.New("10th argument must be a non-empty string")
+	}
+	if len(args[17]) <= 0 {
+		return nil, errors.New("10th argument must be a non-empty string")
+	}
+	if len(args[18]) <= 0 {
+		return nil, errors.New("10th argument must be a non-empty string")
+	}
+	if len(args[19]) <= 0 {
+		return nil, errors.New("10th argument must be a non-empty string")
+	}
+	if len(args[20]) <= 0 {
+		return nil, errors.New("10th argument must be a non-empty string")
+	}	
+	if len(args[21]) <= 0 {
+		return nil, errors.New("10th argument must be a non-empty string")
+	}	
+
 	shipmentId := args[0]
 	description := args[1]
 	sender := args[2]
@@ -434,6 +494,20 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 	shipmentDate := args[8]
 	status := "Created"
 	chaincodeURL := args[9]
+
+	shipFromCity := args[10]
+	shipFromCountry := args[11]
+	shipToCity := args[12]
+	shipToCountry := args[13]
+	truckNum := args[14] 
+	logisticAgencyID := args[15] 
+	airShipWayBillNum := args[16]
+	flightVesselID := args[17]
+	departingPort := args[18]
+	arrivingPort := args[19]
+	departureTime := args[20]
+	arrivalTime := args[21]
+
 	// Adding Rule for senderType and receiverType
 	if(senderType == "Tier-3" && receiverType != "Tier-2"){
 		return nil,errors.New("Tier-3 can send shipment to Tier-2 only")
@@ -516,7 +590,19 @@ func (t *ManageShipment) createShipment(stub shim.ChaincodeStubInterface, args [
 		`"FAA_formNumber": "` + FAA_formNumber + `" , `+
 		`"quantity": "` + quantity + `" , `+ 
 		`"shipmentDate": "` + shipmentDate + `" , `+ 
-		`"status": "` + status + `"`+ 
+		`"status": "` + status + `" , `+
+		`"shipFromCity": "` + shipFromCity + `" , `+
+		`"shipFromCountry": "` + shipFromCountry + `" , `+
+		`"shipToCity": "` + shipToCity + `" , `+
+		`"shipToCountry": "` + shipToCountry + `" , `+
+		`"truckNum": "` + truckNum + `" , `+
+		`"logisticAgencyID": "` + logisticAgencyID + `" , `+
+		`"airShipWayBillNum": "` + airShipWayBillNum + `" , `+
+		`"flightVesselID": "` + flightVesselID + `" , `+
+		`"departingPort": "` + departingPort + `" , `+
+		`"arrivingPort": "` + arrivingPort + `" , `+
+		`"departureTime": "` + departureTime + `" , `+
+		`"arrivalTime": "` + arrivalTime + `"`+ 
 	    `}`
 	fmt.Println("input: " + input)
 	fmt.Print("input in bytes array: ")
