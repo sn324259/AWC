@@ -143,8 +143,6 @@ func (t *ManageShipment) Query(stub shim.ChaincodeStubInterface, function string
 		return t.getShipment_bySender(stub, args)
 	} else if function == "get_AllShipment" {													//Read all Shipments
 		return t.get_AllShipment(stub, args)
-	} else if function == "getShipments_byTier" {													//Get Tier - to - Shipments
-		return t.getShipments_byTier(stub, args)
 	} else if function == "getShipment_byId" {													//Read a Shipment by Buyer
 		return t.getShipment_byId(stub, args)
 	}
