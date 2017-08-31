@@ -50,7 +50,8 @@ type Form struct{
 	Tier2_Form_number string `json:"tier2_Form_number"`
 	Tier1_Form_number string `json:"tier1_Form_number"`
 	UserType string `json:"userType"`
-
+	VendorName string `json:"vendorName"`
+	IPFS_hash string `json:"ipfsHash"`
 }
 
 type Shipment struct{
@@ -142,7 +143,9 @@ func (t *ManageShipment) Query(stub shim.ChaincodeStubInterface, function string
 		return t.getShipment_bySender(stub, args)
 	} else if function == "get_AllShipment" {													//Read all Shipments
 		return t.get_AllShipment(stub, args)
-	}else if function == "getShipment_byId" {													//Read a Shipment by Buyer
+	} else if function == "getShipments_byTier" {													//Get Tier - to - Shipments
+		return t.getShipments_byTier(stub, args)
+	} else if function == "getShipment_byId" {													//Read a Shipment by Buyer
 		return t.getShipment_byId(stub, args)
 	}
 
