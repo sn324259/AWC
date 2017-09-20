@@ -304,6 +304,99 @@ func (t *ManageForm) getForm_byUser(stub shim.ChaincodeStubInterface, args []str
 // ============================================================================================================================
 //  get_AllOEMForm- get details of all OEM Form from chaincode state
 // ============================================================================================================================
+
+
+
+func (t *ManageForm) getTrackingDetails(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var jsonResp, errResp string
+	var FormIndex []string
+	var valIndex Form
+	var oemFormNo,tier1FormNo,tier2FormNo,tier3FormNo string
+	fmt.Println("Fetching Tracking details by part_number and tier_type")
+	if len(args) != 3 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 3 argument")
+	}
+	part_number = args[0]
+	part_type = args[1]
+	fmt.Println("part_number : " + part_number)
+	fmt.Println("part_type : " + part_type)
+	
+	FormAsBytes, err := stub.GetState(OEMFormIndexStr)
+	if err != nil {
+		return nil, errors.New("Failed to get OEM Form index string")
+	}
+	fmt.Print("FormAsBytes : ")
+	fmt.Println(FormAsBytes)
+	json.Unmarshal(FormAsBytes, &FormIndex)
+	
+	fmt.Print("FormIndex : ")
+	fmt.Println(FormIndex)
+	fmt.Println("len(FormIndex) : ")
+	fmt.Println(len(FormIndex))
+	
+	for i,val := range FormIndex{
+		fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for getTrackingDetails")
+		valueAsBytes, err := stub.GetState(val)
+		if err != nil {
+			errResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
+			return nil, errors.New(errResp)
+		}
+		fmt.Print("valueAsBytes : ")
+		fmt.Println(valueAsBytes)
+		json.Unmarshal(valueAsBytes, &valIndex)
+		fmt.Print("valIndex: ")
+		fmt.Print(valIndex)
+		
+		if part_type=="Tier-2"{
+			oemFormNo=valIndex.FAA_FormNumber
+			tier1FormNo=valIndex.Tier1_Form_number
+			tier2FormNo=valIndex.Tier2_Form_number
+			if tier2FormNo
+			tier1_to_oem_Shipment_id=t.getShipmentIdByFormNoAndTierType(tier1FormNo,"Tier-1")
+			
+		}
+	}
+	
+	
+	
+
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 func (t *ManageForm) get_AllOEMForm(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var jsonOEMResp,errResp string
 	var OEMFormIndex []string
