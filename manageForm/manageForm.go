@@ -408,7 +408,7 @@ func (t *ManageForm) getTrackingDetails(stub shim.ChaincodeStubInterface, args [
 			jsonResp=jsonResp+`"TrackingDetails ": "[ `+  tier1FormNo+` ,`+tier1_to_oem_Shipment_id+` ,`+tier2FormNo+` ,`+tier2_to_tier1_Shipment_id+` ]"`+`}`
 			
 		}
-		else{
+		if part_type=="Tier-3"{
 			jsonResp=jsonResp+`"TrackingDetails ": "[ `+tier1FormNo+` ,`+tier1_to_oem_Shipment_id+` ,`+tier2FormNo+` ,`+tier2_to_tier1_Shipment_id+` ,`+tier3FormNo+` ,`+tier3_to_tier2_Shipment_id+` ]"`+`}`
 		}
 		return []byte(jsonResp), nil
