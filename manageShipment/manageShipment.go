@@ -157,6 +157,8 @@ func (t *ManageShipment) Query(stub shim.ChaincodeStubInterface, function string
 		return t.get_AllShipment(stub, args)
 	} else if function == "getShipment_byId" {													//Read a Shipment by Buyer
 		return t.getShipment_byId(stub, args)
+	}else if function== "getShipmentIdByFormNoAndTierType" {
+		return t.getShipmentIdByFormNoAndTierType(stub,args)
 	}
 
 	fmt.Println("query did not find func: " + function)						//error
