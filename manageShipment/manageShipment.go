@@ -185,6 +185,84 @@ func (t *ManageShipment) getShipment_byId(stub shim.ChaincodeStubInterface, args
 	fmt.Println("Fetched Form by shipmentId")
 	return valAsbytes, nil	
 }
+
+
+func (t *ManageShipment) getShipmentIdByFormNoAndTierType(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var formNo,tier_type,jsonResp string
+	var err error
+	var ShipmentIndex []string
+	var valIndex Shipment
+	fmt.Println("Fetching shipment Form by shipmentId")
+	if len(args) != 2 {
+		return nil, errors.New("Incorrect number of arguments.")
+	}
+	// set shipmentId
+	formNo = args[0]
+	tier_type=args[1]
+	
+	ShipmentAsBytes, err := stub.GetState(ShipmentIndexStr)
+	if err != nil {
+		return nil, errors.New("Failed to get Shipment index string")
+	}
+	fmt.Print("ShipmentAsBytes : ")
+	fmt.Println(ShipmentAsBytes)
+	json.Unmarshal(ShipmentAsBytes, &ShipmentIndex)									//un stringify it aka JSON.parse()
+	fmt.Print("ShipmentIndex : ")
+	fmt.Println(ShipmentIndex)
+	fmt.Println("len(ShipmentIndex) : ")
+	fmt.Println(len(ShipmentIndex))
+	jsonResp = ""
+	for i,val := range ShipmentIndex{
+		fmt.Println(strconv.Itoa(i) + " - looking at " + val + " for getShipmentIdByFormNoAndTierType")
+		valueAsBytes, err := stub.GetState(val)
+		if err != nil {
+			errResp = "{\"Error\":\"Failed to get state for " + val + "\"}"
+			return nil, errors.New(errResp)
+		}
+		fmt.Print("valueAsBytes : ")
+		fmt.Println(valueAsBytes)
+		json.Unmarshal(valueAsBytes, &valIndex)
+		fmt.Print("valIndex: ")
+		fmt.Print(valIndex)
+		if valIndex.FAA_FormNumber == formNo{
+			
+			jsonResp=valIndex.ShipmentID
+		}
+	}
+	
+	return []byte(jsonResp),nil
+
+
+
+
+}
+															  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // ============================================================================================================================
 //  getShipment_byReceiver - get Shipment details by Receiver from chaincode state
 // ============================================================================================================================
