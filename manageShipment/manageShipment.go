@@ -188,7 +188,7 @@ func (t *ManageShipment) getShipment_byId(stub shim.ChaincodeStubInterface, args
 
 
 func (t *ManageShipment) getShipmentIdByFormNoAndTierType(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	var formNo,tier_type,jsonResp string
+	var formNo,jsonResp string
 	var err error
 	var errResp string
 	var ShipmentIndex []string
@@ -199,7 +199,7 @@ func (t *ManageShipment) getShipmentIdByFormNoAndTierType(stub shim.ChaincodeStu
 	}
 	// set shipmentId
 	formNo = args[0]
-	tier_type=args[1]
+
 	
 	ShipmentAsBytes, err := stub.GetState(ShipmentIndexStr)
 	if err != nil {
