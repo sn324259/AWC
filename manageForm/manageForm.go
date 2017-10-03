@@ -185,8 +185,9 @@ func (t *ManageForm) Query(stub shim.ChaincodeStubInterface, function string, ar
 		return t.getForm_byUser(stub, args)
 	} else if function == "get_AllForm" {													//Read all Forms
 		return t.get_AllForm(stub, args)
-	} else if function=="getTrackingDetails"
+	} else if function=="getTrackingDetails" {
 		return t.getTrackingDetails(stub,args)
+	}
 
 	fmt.Println("query did not find func: " + function)				//error
 	jsonResp := "Error : Received unknown function query: "+ function 
