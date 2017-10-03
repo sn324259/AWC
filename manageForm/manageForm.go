@@ -311,6 +311,7 @@ func (t *ManageForm) getTrackingDetails(stub shim.ChaincodeStubInterface, args [
 	var jsonResp, errResp string
 	var FormIndex []string
 	var valIndex Form
+	var part_number,part_type string
 	var oemFormNo,tier1FormNo,tier2FormNo,tier3FormNo string
 	var tier1_to_oem_Shipment_id,tier2_to_tier1_Shipment_id,tier3_to_tier2_Shipment_id string
 	var chaincodeURL string
@@ -367,7 +368,7 @@ func (t *ManageForm) getTrackingDetails(stub shim.ChaincodeStubInterface, args [
 				tier1_to_oem_Shipment_id_as_byte,err := stub.QueryChaincode(chaincodeURL, queryArgs)
 				json.Unmarshal(tier1_to_oem_Shipment_id_as_byte, &tier_to_tier_shipment_id)
 				tier1_to_oem_Shipment_id=tier_to_tier_shipment_id[0]
-				tier_to_tier_shipment_id=[]string 
+				tier_to_tier_shipment_id=[]
 				//tier1_to_oem_Shipment_id=t.getShipmentIdByFormNoAndTierType(tier1FormNo,"Tier-1")
 				queryArgs = util.ToChaincodeArgs(f,tier2FormNo,"Tier-2")
 				tier2_to_tier1_Shipment_id_as_byte,err := stub.QueryChaincode(chaincodeURL, queryArgs)
@@ -385,7 +386,7 @@ func (t *ManageForm) getTrackingDetails(stub shim.ChaincodeStubInterface, args [
 				tier1_to_oem_Shipment_id_as_byte,err := stub.QueryChaincode(chaincodeURL, queryArgs)
 				json.Unmarshal(tier1_to_oem_Shipment_id_as_byte, &tier_to_tier_shipment_id)
 				tier1_to_oem_Shipment_id=tier_to_tier_shipment_id[0]
-				tier_to_tier_shipment_id=[]string 
+				tier_to_tier_shipment_id=[]
 				//tier1_to_oem_Shipment_id=t.getShipmentIdByFormNoAndTierType(tier1FormNo,"Tier-1")
 				queryArgs = util.ToChaincodeArgs(f,tier2FormNo,"Tier-2")
 				tier2_to_tier1_Shipment_id_as_byte,err := stub.QueryChaincode(chaincodeURL, queryArgs)
@@ -398,6 +399,7 @@ func (t *ManageForm) getTrackingDetails(stub shim.ChaincodeStubInterface, args [
 				tier3_to_tier2_Shipment_id=tier_to_tier_shipment_id[0]
 				
 			}
+			break
 		}
 		
 	}
