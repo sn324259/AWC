@@ -358,20 +358,20 @@ func (t *ManageForm) getTrackingDetails(stub shim.ChaincodeStubInterface, args [
 		fmt.Print("valIndex: ")
 		fmt.Print(valIndex)
 		if oemFormNo==valIndex.FAA_FormNumber{
-			input_flag=="1"
+			input_flag="1"
 		
 			if part_type=="Tier-2"{
 				
 				tier1FormNo=valIndex.Tier1_Form_number
 				tier2FormNo=valIndex.Tier2_Form_number
 				f := "getShipmentIdByFormNoAndTierType"
-				queryArgs = util.ToChaincodeArgs(f,tier1FormNo,"Tier-1")
+				queryArgs = util.ToChaincodeArgs(f,[tier1FormNo,"Tier-1"])
 				tier1_to_oem_Shipment_id_as_byte,err := stub.QueryChaincode(chaincodeURL, queryArgs)
 				json.Unmarshal(tier1_to_oem_Shipment_id_as_byte, &tier_to_tier_shipment_id)
 				tier1_to_oem_Shipment_id=tier_to_tier_shipment_id[0]
 				
 				//tier1_to_oem_Shipment_id=t.getShipmentIdByFormNoAndTierType(tier1FormNo,"Tier-1")
-				queryArgs = util.ToChaincodeArgs(f,tier2FormNo,"Tier-2")
+				queryArgs = util.ToChaincodeArgs(f,[tier2FormNo,"Tier-2"])
 				tier2_to_tier1_Shipment_id_as_byte,err := stub.QueryChaincode(chaincodeURL, queryArgs)
 				json.Unmarshal(tier2_to_tier1_Shipment_id_as_byte, &tier_to_tier_shipment_id)
 				tier2_to_tier1_Shipment_id=tier_to_tier_shipment_id[0]
@@ -383,18 +383,18 @@ func (t *ManageForm) getTrackingDetails(stub shim.ChaincodeStubInterface, args [
 				tier2FormNo=valIndex.Tier2_Form_number
 				tier3FormNo=valIndex.Tier3_Form_number
 				f := "getShipmentIdByFormNoAndTierType"
-				queryArgs = util.ToChaincodeArgs(f,tier1FormNo,"Tier-1")
+				queryArgs = util.ToChaincodeArgs(f,[tier1FormNo,"Tier-1"])
 				tier1_to_oem_Shipment_id_as_byte,err := stub.QueryChaincode(chaincodeURL, queryArgs)
 				json.Unmarshal(tier1_to_oem_Shipment_id_as_byte, &tier_to_tier_shipment_id)
 				tier1_to_oem_Shipment_id=tier_to_tier_shipment_id[0]
 				
 				//tier1_to_oem_Shipment_id=t.getShipmentIdByFormNoAndTierType(tier1FormNo,"Tier-1")
-				queryArgs = util.ToChaincodeArgs(f,tier2FormNo,"Tier-2")
+				queryArgs = util.ToChaincodeArgs(f,[tier2FormNo,"Tier-2"])
 				tier2_to_tier1_Shipment_id_as_byte,err := stub.QueryChaincode(chaincodeURL, queryArgs)
 				json.Unmarshal(tier2_to_tier1_Shipment_id_as_byte, &tier_to_tier_shipment_id)
 				tier2_to_tier1_Shipment_id=tier_to_tier_shipment_id[0]
 			
-				queryArgs = util.ToChaincodeArgs(f,tier3FormNo,"Tier-3")
+				queryArgs = util.ToChaincodeArgs(f,[tier3FormNo,"Tier-3"])
 				tier3_to_tier2_Shipment_id_as_byte,err := stub.QueryChaincode(chaincodeURL, queryArgs)
 				json.Unmarshal(tier3_to_tier2_Shipment_id_as_byte, &tier_to_tier_shipment_id)
 				tier3_to_tier2_Shipment_id=tier_to_tier_shipment_id[0]
