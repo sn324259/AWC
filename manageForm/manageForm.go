@@ -315,7 +315,7 @@ func (t *ManageForm) getTrackingDetails(stub shim.ChaincodeStubInterface, args [
 	var tier1_to_oem_Shipment_id,tier2_to_tier1_Shipment_id,tier3_to_tier2_Shipment_id string
 	var chaincodeURL string
 	var tier_to_tier_shipment_id []string
-	var input_flag string := "0"
+	var input_flag string = "0"
 	fmt.Println("Fetching Tracking details by part_number and tier_type")
 	if len(args) != 4 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 4 argument")
@@ -399,9 +399,7 @@ func (t *ManageForm) getTrackingDetails(stub shim.ChaincodeStubInterface, args [
 				
 			}
 		}
-		else{
-			continue
-		}
+		
 	}
 	
 	if input_flag=="1"{
