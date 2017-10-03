@@ -313,7 +313,7 @@ func (t *ManageForm) getTrackingDetails(stub shim.ChaincodeStubInterface, args [
 	var valIndex Form
 	var oemFormNo,tier1FormNo,tier2FormNo,tier3FormNo string
 	var tier1_to_oem_Shipment_id,tier2_to_tier1_Shipment_id,tier3_to_tier2_Shipment_id string
-	var manageFromUrl string
+	var chaincodeURL string
 	var input_flag string="0"
 	fmt.Println("Fetching Tracking details by part_number and tier_type")
 	if len(args) != 4 {
@@ -322,11 +322,11 @@ func (t *ManageForm) getTrackingDetails(stub shim.ChaincodeStubInterface, args [
 	part_number = args[0]
 	part_type = args[1]
 	oemFormNo=args[2]
-	manageFormUrl=args[3]
+	chaincodeURL=args[3]
 	fmt.Println("part_number : " + part_number)
 	fmt.Println("part_type : " + part_type)
 	fmt.Println("oemFormNo : " + oemFormNo)
-	fmt.Println("manageFormUrl : " + manageFormUrl)
+	fmt.Println("manageFormUrl : " +chaincodeURL)
 
 	
 	FormAsBytes, err := stub.GetState(OEMFormIndexStr)
@@ -361,17 +361,30 @@ func (t *ManageForm) getTrackingDetails(stub shim.ChaincodeStubInterface, args [
 				
 				tier1FormNo=valIndex.Tier1_Form_number
 				tier2FormNo=valIndex.Tier2_Form_number
-				tier1_to_oem_Shipment_id=t.getShipmentIdByFormNoAndTierType(tier1FormNo,"Tier-1")
-				tier2_to_tier1_Shipment_id=t.getShipmentIdByFormNoAndTierType(tier2FormNo,"Tier-2")
+				f := "getShipmentIdByFormNoAndTierType"
+				queryArgs := util.ToChaincodeArgs(f,tier1FormNo,"Tier-1")
+				tier1_to_oem_Shipment_id = stub.QueryChaincode(chaincodeURL, queryArgs)
+				//tier1_to_oem_Shipment_id=t.getShipmentIdByFormNoAndTierType(tier1FormNo,"Tier-1")
+				queryArgs = util.ToChaincodeArgs(f,tier2FormNo,"Tier-2")
+				tier2_to_tier1_Shipment_id= stub.QueryChaincode(chaincodeURL, queryArgs)
+				//tier2_to_tier1_Shipment_id=t.getShipmentIdByFormNoAndTierType(tier2FormNo,"Tier-2")
+				
 				
 			}
 			if part_type=="Tier-3"{
 				tier1FormNo=valIndex.Tier1_Form_number
 				tier2FormNo=valIndex.Tier2_Form_number
 				tier3FormNo=valIndex.Tier3_Form_number
-				tier1_to_oem_Shipment_id=t.getShipmentIdByFormNoAndTierType(tier1FormNo,"Tier-1")
-				tier2_to_tier1_Shipment_id=t.getShipmentIdByFormNoAndTierType(tier2FormNo,"Tier-2")
-				tier3_to_tier2_Shipment_id=t.getShipmentIdByFormNoAndTierType(tier3FormNo,"Tier-3")
+				f := "getShipmentIdByFormNoAndTierType"
+				queryArgs := util.ToChaincodeArgs(f,tier1FormNo,"Tier-1")
+				tier1_to_oem_Shipment_id = stub.QueryChaincode(chaincodeURL, queryArgs)
+				//tier1_to_oem_Shipment_id=t.getShipmentIdByFormNoAndTierType(tier1FormNo,"Tier-1")
+				queryArgs = util.ToChaincodeArgs(f,tier2FormNo,"Tier-2")
+				tier2_to_tier1_Shipment_id= stub.QueryChaincode(chaincodeURL, queryArgs)
+				//tier2_to_tier1_Shipment_id=t.getShipmentIdByFormNoAndTierType(tier2FormNo,"Tier-2")
+				queryArgs = util.ToChaincodeArgs(f,tier3FormNo,"Tier-3")
+				tier3_to_tier2_Shipment_id= stub.QueryChaincode(chaincodeURL, queryArgs)
+				//tier3_to_tier2_Shipment_id=t.getShipmentIdByFormNoAndTierType(tier3FormNo,"Tier-3")
 				
 			}
 		}
