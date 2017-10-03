@@ -312,14 +312,22 @@ func (t *ManageForm) getTrackingDetails(stub shim.ChaincodeStubInterface, args [
 	var FormIndex []string
 	var valIndex Form
 	var oemFormNo,tier1FormNo,tier2FormNo,tier3FormNo string
+	var tier1_to_oem_Shipment_id,tier2_to_tier1_Shipment_id,tier3_to_tier2_Shipment_id string
+	var manageFromUrl string
+	var input_flag string="0"
 	fmt.Println("Fetching Tracking details by part_number and tier_type")
-	if len(args) != 3 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 3 argument")
+	if len(args) != 4 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 4 argument")
 	}
 	part_number = args[0]
 	part_type = args[1]
+	oemFormNo=args[2]
+	manageFormUrl=args[3]
 	fmt.Println("part_number : " + part_number)
 	fmt.Println("part_type : " + part_type)
+	fmt.Println("oemFormNo : " + oemFormNo)
+	fmt.Println("manageFormUrl : " + manageFormUrl)
+
 	
 	FormAsBytes, err := stub.GetState(OEMFormIndexStr)
 	if err != nil {
@@ -346,16 +354,46 @@ func (t *ManageForm) getTrackingDetails(stub shim.ChaincodeStubInterface, args [
 		json.Unmarshal(valueAsBytes, &valIndex)
 		fmt.Print("valIndex: ")
 		fmt.Print(valIndex)
+		if oemFormNo==valIndex.FAA_FormNumber{
+			input_flag=="1"
 		
-		if part_type=="Tier-2"{
-			oemFormNo=valIndex.FAA_FormNumber
-			tier1FormNo=valIndex.Tier1_Form_number
-			tier2FormNo=valIndex.Tier2_Form_number
-			if tier2FormNo
-			tier1_to_oem_Shipment_id=t.getShipmentIdByFormNoAndTierType(tier1FormNo,"Tier-1")
-			
+			if part_type=="Tier-2"{
+				
+				tier1FormNo=valIndex.Tier1_Form_number
+				tier2FormNo=valIndex.Tier2_Form_number
+				tier1_to_oem_Shipment_id=t.getShipmentIdByFormNoAndTierType(tier1FormNo,"Tier-1")
+				tier2_to_tier1_Shipment_id=t.getShipmentIdByFormNoAndTierType(tier2FormNo,"Tier-2")
+				
+			}
+			if part_type=="Tier-3"{
+				tier1FormNo=valIndex.Tier1_Form_number
+				tier2FormNo=valIndex.Tier2_Form_number
+				tier3FormNo=valIndex.Tier3_Form_number
+				tier1_to_oem_Shipment_id=t.getShipmentIdByFormNoAndTierType(tier1FormNo,"Tier-1")
+				tier2_to_tier1_Shipment_id=t.getShipmentIdByFormNoAndTierType(tier2FormNo,"Tier-2")
+				tier3_to_tier2_Shipment_id=t.getShipmentIdByFormNoAndTierType(tier3FormNo,"Tier-3")
+				
+			}
+		}
+		else{
+			continue
 		}
 	}
+	
+	if input_flag=="1"{
+		jsonResp=`{`
+		if part_type=="Tier-2"{
+			jsonResp=jsonResp+`"TrackingDetails ": "[ `+  tier1FormNo+` ,`+tier1_to_oem_Shipment_id+` ,`+tier2FormNo+` ,`+tier2_to_tier1_Shipment_id+` ]"`+`}`
+			
+		}
+		else{
+			jsonResp=jsonResp+`"TrackingDetails ": "[ `+tier1FormNo+` ,`+tier1_to_oem_Shipment_id+` ,`+tier2FormNo+` ,`+tier2_to_tier1_Shipment_id+` ,`+tier3FormNo+` ,`+tier3_to_tier2_Shipment_id+` ]"`+`}`
+		}
+		return []byte(jsonResp), nil
+	}
+	
+	return []byte(`{"error":"part number not found.Please check arguments in the ui"}`), nil
+}
 	
 	
 	
