@@ -311,7 +311,7 @@ func (t *ManageForm) getTrackingDetails(stub shim.ChaincodeStubInterface, args [
 	var jsonResp, errResp string
 	var FormIndex []string
 	var valIndex Form
-	var queryArgs string
+	var queryArgs []string
 	var part_number,part_type string
 	var oemFormNo,tier1FormNo,tier2FormNo,tier3FormNo string
 	var tier1_to_oem_Shipment_id,tier2_to_tier1_Shipment_id,tier3_to_tier2_Shipment_id string
